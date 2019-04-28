@@ -15,23 +15,19 @@ import java.util.HashMap;
 public class PObject implements PropType, Serializable {
     @Override
     public Object parse(Object value) throws InvalidPropTypeException {
-        if(value == null) {
-            if(!required) return null;
-            return new HashMap<>();
-        }
+        if(value == null) value = required ? defaultValue : null;
         if(!isValid(value)) throw new InvalidPropTypeException("Invalid object value");
-        return (HashMap) value;
+        return value;
     }
 
     @Override
     public boolean isValid(Object value) {
         if(value == null) return !required;
-        HashMap v = (HashMap) value;
         return true;
     }
 
     @Override
-    public boolean isRequired() { return required; }
+    public Boolean isRequired() { return required; }
 
     public final String type = "object";
 

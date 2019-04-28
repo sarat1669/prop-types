@@ -4,7 +4,7 @@ public interface PropType {
 
     String getType();
     Object parse(Object value) throws InvalidPropTypeException;
-    boolean isRequired();
+    Boolean isRequired();
     Object getDefaultValue();
     boolean isValid(Object value);
 }

@@ -15,7 +15,7 @@ public class PFloat implements PropType, Serializable {
 
     @Override
     public Object parse(Object value) throws InvalidPropTypeException {
-        if(value == null) return required ? defaultValue : null;
+        if(value == null) value = required ? defaultValue : null;
         if(!isValid(value)) throw new InvalidPropTypeException("Invalid float value");
         return value instanceof Integer ? ((Integer) value).doubleValue() : (Double) value;
     }
@@ -23,12 +23,16 @@ public class PFloat implements PropType, Serializable {
     @Override
     public boolean isValid(Object value) {
         if(value == null) return !required;
-        Double v = value instanceof Integer ? ((Integer) value).doubleValue() : (Double) value;
-        return true;
+        try {
+            Double v = value instanceof Integer ? ((Integer) value).doubleValue() : (Double) value;
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public boolean isRequired() { return required; }
+    public Boolean isRequired() { return required; }
 
     private final String type = "float";
 

@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class PBoolean implements PropType, Serializable {
     @Override
     public Object parse(Object value) throws InvalidPropTypeException {
-        if(value == null) return required ? defaultValue : null;
+        if(value == null) value = required ? defaultValue : null;
         if(!isValid(value)) throw new InvalidPropTypeException("Invalid boolean value");
         return (Boolean) value;
     }
@@ -22,12 +22,16 @@ public class PBoolean implements PropType, Serializable {
     @Override
     public boolean isValid(Object value) {
         if(value == null) return !required;
-        Boolean v = (Boolean) value;
-        return true;
+        try {
+            Boolean v = (Boolean) value;
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public boolean isRequired() { return required; }
+    public Boolean isRequired() { return required; }
 
     public final String type = "boolean";
 

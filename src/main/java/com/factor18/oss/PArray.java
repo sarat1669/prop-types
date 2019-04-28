@@ -17,6 +17,7 @@ public class PArray implements PropType, Serializable {
 
     @Override
     public Object parse(Object value) throws InvalidPropTypeException {
+        if(value == null) value = required ? defaultValue : null;
         List v = (List) value;
         List<Object> parsed = new ArrayList<>();
         items = items == null ? new ArrayList<PropType>() : items;
@@ -33,11 +34,11 @@ public class PArray implements PropType, Serializable {
         if(!isValid(value)) throw new InvalidPropTypeException("Invalid array value");
 
         for (int i = 0; i < items.size(); i++) {
-            parsed.set(i, items.get(i).parse(v.get(i)));
+            parsed.add(items.get(i).parse(v.get(i)));
         }
 
         for (int i = items.size(); i < v.size(); i++) {
-            parsed.set(i, additionalItems.parse(v.get(i)));
+            parsed.add(additionalItems.parse(v.get(i)));
         }
 
         return parsed;
@@ -46,31 +47,37 @@ public class PArray implements PropType, Serializable {
     @Override
     public boolean isValid(Object value) {
         if(value == null) return !required;
-        List v = (List) value;
 
-        items = items == null ? new ArrayList<PropType>() : items;
+        try {
+            List v = (List) value;
 
-        for (int i = 0; i < items.size(); i++) {
-            if(!items.get(i).isValid(v.get(i))) return false;
+            items = items == null ? new ArrayList<PropType>() : items;
+
+            for (int i = 0; i < items.size(); i++) {
+                if(!items.get(i).isValid(v.get(i))) return false;
+            }
+
+            if(additionalItems == null) return v.size() == items.size();
+
+            for (int i = items.size(); i < v.size(); i++) {
+                if(!additionalItems.isValid(v.get(i))) return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
         }
 
-        if(additionalItems == null) return v.size() == items.size();
-
-        for (int i = items.size(); i < v.size(); i++) {
-            if(!additionalItems.isValid(v.get(i))) return false;
-        }
-
-        return true;
     }
 
     @Override
-    public boolean isRequired() { return required; }
+    public Boolean isRequired() { return required; }
 
     private final String type = "array";
 
     private Boolean required;
     private List<Object> defaultValue;
 
-    private List<PropType> items;
+    private List<? extends PropType> items;
     private PropType additionalItems;
 }

@@ -16,6 +16,7 @@ import java.util.Map;
 public class PShape implements PropType, Serializable {
     @Override
     public Object parse(Object value) throws InvalidPropTypeException {
+        if(value == null) value = required ? defaultValue : null;
         HashMap v = (HashMap) value;
         HashMap parsed = new HashMap();
         if(value == null) {
@@ -36,15 +37,19 @@ public class PShape implements PropType, Serializable {
     @Override
     public boolean isValid(Object value) {
         if(value == null) return !required;
-        HashMap v = (HashMap) value;
-        for (Map.Entry<String, PropType> prop : schema.entrySet()) {
-            if(!prop.getValue().isValid(v.get(prop.getKey()))) return false;
+        try {
+            HashMap v = (HashMap) value;
+            for (Map.Entry<String, PropType> prop : schema.entrySet()) {
+                if (!prop.getValue().isValid(v.get(prop.getKey()))) return false;
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        return true;
     }
 
     @Override
-    public boolean isRequired() { return required; }
+    public Boolean isRequired() { return required; }
 
     private final String type = "shape";
 

@@ -15,7 +15,7 @@ public class PInteger implements PropType, Serializable {
 
     @Override
     public Object parse(Object value) throws InvalidPropTypeException {
-        if(value == null) return required ? defaultValue : null;
+        if(value == null) value = required ? defaultValue : null;
         if(!isValid(value)) throw new InvalidPropTypeException("Invalid integer value");
         return value instanceof Double ? ((Double) value).intValue() : value instanceof Integer ? (Integer) value : new Integer(value.toString());
     }
@@ -23,12 +23,16 @@ public class PInteger implements PropType, Serializable {
     @Override
     public boolean isValid(Object value) {
         if(value == null) return !required;
-        Integer v = value instanceof Double ? ((Double) value).intValue() : value instanceof Integer ? (Integer) value : new Integer(value.toString());
-        return true;
+        try {
+            Integer v = value instanceof Double ? ((Double) value).intValue() : value instanceof Integer ? (Integer) value : new Integer(value.toString());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public boolean isRequired() { return required; }
+    public Boolean isRequired() { return required; }
 
     private final String type = "integer";
 
