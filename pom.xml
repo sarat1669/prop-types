@@ -6,7 +6,7 @@
 
   <groupId>com.factor18.oss</groupId>
   <artifactId>prop-types</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
   <packaging>jar</packaging>
   <name>prop-types</name>
   <description>PropTypes for JAVA</description>
